@@ -1,5 +1,5 @@
 import { makeAutoObservable, observable, runInAction } from 'mobx';
-import { MonedaDTO } from '../classes/appClasses';
+import { GetTransaccionDTO, TransaccionDTO } from '../classes/appClasses';
 import axios from 'axios';
 import * as yup from 'yup';
 import { VALIDATION_STRINGS } from '../messages/appMessages';
@@ -8,17 +8,21 @@ import { renderToString } from 'react-dom/server';
 
 import.meta.env.VITE_API_URL;
 
-class MonedaStore {
+class TransaccionStore {
     totalPages = 0;
     pageNumber = 0;
-    pageSize = 5;
-    moneda: MonedaDTO = {
-        idMoneda: 0,
-        nombre: '',
-        codigo: ''
+    pageSize = 10;
+    transaccion: TransaccionDTO = {
+        idTransaccion: 0,
+        clienteOrigen: 0,
+        clienteDestino: 0,
+        moneda: 0,
+        cantidad: 0,
+        codigo: '',
+        fecha: new Date(),
+        retirado: false
     }
-    monedas: MonedaDTO[] = [];
-    select: MonedaDTO[] = [];
+    transacciones: GetTransaccionDTO[] = [];
     consultarApi: boolean = false;
     isValid: boolean = false;
     isLoading: boolean = false;
@@ -26,33 +30,34 @@ class MonedaStore {
 
     constructor() {
         makeAutoObservable(this, {
-            moneda: observable,
+            transaccion: observable,
             consultarApi: observable,
             isLoading: observable,
             focusInput: observable
         });
     }
 
-    monedaInicial: MonedaDTO = {
-        idMoneda: 0,
-        nombre: '',
-        codigo: ''
+    transaccionInicial: TransaccionDTO = {
+        idTransaccion: 0,
+        clienteOrigen: 0,
+        clienteDestino: 0,
+        moneda: 0,
+        cantidad: 0,
+        codigo: '',
+        fecha: new Date(),
+        retirado: false
     };
 
     limpiar = () => {
-        this.setMoneda(this.monedaInicial);
+        this.setTransaccion(this.transaccionInicial);
     };
 
-    setMoneda(moneda: MonedaDTO) {
-        this.moneda = moneda;
+    setTransaccion(transaccion: TransaccionDTO) {
+        this.transaccion = transaccion;
     }
 
-    setMonedas(monedas: MonedaDTO[]) {
-        this.monedas = monedas;
-    }
-
-    setSelect(select: MonedaDTO[]) {
-        this.select = select;
+    setTransacciones(transacciones: GetTransaccionDTO[]) {
+        this.transacciones = transacciones;
     }
 
     setIsValid(isValid: boolean) {
@@ -76,19 +81,20 @@ class MonedaStore {
     }
 
     validationSchema = yup.object().shape({
-        nombre: yup.string()
-            .required(VALIDATION_STRINGS.nombreRequired)
-            .min(2, VALIDATION_STRINGS.nombreMinLength)
-            .max(50, VALIDATION_STRINGS.nombreMaxLength),
-        codigo: yup.string()
-            .required(VALIDATION_STRINGS.codigoRequired)
-            .min(3, VALIDATION_STRINGS.codigoMinLength)
-            .max(3, VALIDATION_STRINGS.codigoMaxLength)
+        monedaOrigen: yup.number()
+            .required(VALIDATION_STRINGS.monedaOrigenRequired)
+            .moreThan(0, VALIDATION_STRINGS.monedaOrigenMinLength),
+        monedaDestino: yup.number()
+            .required(VALIDATION_STRINGS.monedaDestinoRequired)
+            .moreThan(0, VALIDATION_STRINGS.monedaDestinoMinLength),
+        valor: yup.number()
+            .required(VALIDATION_STRINGS.valorRequired)
+            .moreThan(0, VALIDATION_STRINGS.valorMinLength)
     });
 
-    validateMoneda() {
+    validateTransaccion() {
         try {
-            this.validationSchema.validateSync(this.moneda, { abortEarly: false });
+            this.validationSchema.validateSync(this.transaccion, { abortEarly: false });
             return true;
         } catch (error) {
             runInAction(() => {
@@ -104,15 +110,15 @@ class MonedaStore {
     }
 
     async listarPaginado(pageNumber: number, pageSize: number): Promise<void> {
-        const url = `${import.meta.env.VITE_API_URL}/monedas?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+        const url = `${import.meta.env.VITE_API_URL}/transacciones?pageNumber=${pageNumber}&pageSize=${pageSize}`;
 
         await axios.get(url).then(resp => {
             const data = resp.data;
-            this.setMonedas(data.content);
+            this.setTransacciones(data.content);
             this.setTotalPages(data.totalPages);
 
             runInAction(() => {
-                this.setMonedas(data.content);
+                this.setTransacciones(data.content);
                 this.setTotalPages(data.totalPages);
             });
         }).catch((error) => {
@@ -120,41 +126,27 @@ class MonedaStore {
         });
     }
 
-    async listar(): Promise<void> {
-        const url = `${import.meta.env.VITE_API_URL}/monedas/listar`;
+    async buscarPorCodigo(codigo: string): Promise<void> {
+        const url = `${import.meta.env.VITE_API_URL}/transacciones/${codigo}`;
 
-        await axios.get(url).then(resp => {
+        try {
+            const resp = await axios.get(url);
             const data = resp.data;
-            this.setSelect(data);
 
             runInAction(() => {
-                this.setSelect(data);
+                this.setTransaccion(data);
             });
-        }).catch((error) => {
-            console.error(error);
-        });
-    }
-
-    async buscarPorId(id: number): Promise<void> {
-        const url = `${import.meta.env.VITE_API_URL}/monedas/${id}`;
-
-        await axios.get(url).then(resp => {
-            const data = resp.data;
-            this.setMoneda(data);
-
-            runInAction(() => {
-                this.setMoneda(data);
-            });
-        }).catch((error) => {
-            console.error(error);
-        });
+        } catch (error: any) {
+            useNotifications(VALIDATION_STRINGS.withdrawError, error.response.data, 'error');
+            throw error;
+        }
     }
 
     async guardar(): Promise<void> {
-        const url = `${import.meta.env.VITE_API_URL}/monedas`;
+        const url = `${import.meta.env.VITE_API_URL}/transacciones`;
 
         try {
-            await axios.post(url, this.moneda);
+            await axios.post(url, this.transaccion);
 
             this.limpiar();
             await this.listarPaginado(this.pageNumber, this.pageSize);
@@ -165,10 +157,10 @@ class MonedaStore {
     }
 
     async actualizar(): Promise<void> {
-        const url = `${import.meta.env.VITE_API_URL}/monedas/${this.moneda.idMoneda}`;
+        const url = `${import.meta.env.VITE_API_URL}/transacciones/${this.transaccion.idTransaccion}`;
 
         try {
-            await axios.put(url, this.moneda);
+            await axios.put(url, this.transaccion);
 
             this.limpiar();
             await this.listarPaginado(this.pageNumber, this.pageSize);
@@ -179,5 +171,5 @@ class MonedaStore {
     }
 }
 
-const monedaStore = new MonedaStore();
-export default monedaStore;
+const transaccionStore = new TransaccionStore();
+export default transaccionStore;

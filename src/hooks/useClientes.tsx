@@ -1,9 +1,26 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import useNotifications from '../utils/useNotifications';
 import store from '../store/clienteStore';
+import { useEffect } from 'react';
 
 const useClientes = () => {
     let nav = useNavigate();
+
+    const buscarPorId = () => {
+        const { id } = useParams();
+
+        useEffect(() => {
+            if (id !== undefined) {
+                store.buscarPorId(parseInt(id));
+            }
+        }, []);
+    }
+
+    const cargarListaPaginada = () => {
+        useEffect(() => {
+            store.listarPaginado(store.pageNumber, store.pageSize);
+        }, [store.pageNumber, store.pageSize]);
+    }
 
     const handleInputCliente = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -46,6 +63,8 @@ const useClientes = () => {
     };
 
     return {
+        buscarPorId,
+        cargarListaPaginada,
         handleInputCliente,
         handleInputTipoDocumento,
         handleSaveCliente,

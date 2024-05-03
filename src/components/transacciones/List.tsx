@@ -1,18 +1,17 @@
 import { observer } from 'mobx-react';
-import store from '../../store/clienteStore';
-import { Link } from 'react-router-dom';
-import useClientes from '../../hooks/useClientes';
+import store from '../../store/transaccionStore';
+import useTransacciones from '../../hooks/useTransacciones';
 
 const List = () => {
-    const { cargarListaPaginada, handlePageChange } = useClientes();
-    
+    const { cargarListaPaginada, handlePageChange, handleClipboard } = useTransacciones();
+
     cargarListaPaginada();
 
     return (
         <>
             <div className="container">
                 <div className='text-center m-3'>
-                    <h3>Gestor de Clientes</h3>
+                    <h3>Gestor de Transacciones</h3>
                 </div>
             </div>
             <div className="container">
@@ -20,27 +19,36 @@ const List = () => {
                     <thead className="table-dark text-center">
                         <tr>
                             <th scope="col">Id</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Apellido</th>
-                            <th scope="col">Documento</th>
+                            <th scope="col">Destinatario</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Moneda</th>
+                            <th scope="col">Estado</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {store.clientes.length > 0 ? (
-                            store.clientes.map((cliente: any) => (
-                                <tr key={cliente.idCliente}>
-                                    <th scope="row">{cliente.idCliente}</th>
-                                    <td>{cliente.nombre}</td>
-                                    <td>{cliente.apellido}</td>
-                                    <td>{cliente.documento}</td>
+                        {store.transacciones.length > 0 ? (
+                            store.transacciones.map((transaccion: any) => (
+                                <tr key={transaccion.idTransaccion}>
+                                    <th scope="row">{transaccion.idTransaccion}</th>
+                                    <td>{transaccion.clienteDestino}</td>
+                                    <td>{transaccion.cantidad}</td>
+                                    <td>{transaccion.moneda}</td>
+                                    <td className='text-center'>
+                                        {transaccion.retirado ? (
+                                            <span className="badge text-bg-warning">Retirado</span>
+                                        ) : (
+                                            <span className="badge text-bg-success">Disponible</span>
+                                        )}
+                                    </td>
                                     <td className="text-center">
-                                        <Link to={`/clientes/editar/${cliente.idCliente}`} className="btn btn-warning btn-sm me-sm-3">
-                                            <svg fillRule="evenodd" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"></path>
-                                                <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"></path>
+                                        <button onClick={() => handleClipboard(transaccion.codigo)} className="btn btn-primary btn-sm">
+                                            <svg fillRule="evenodd" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-clipboard-check" viewBox="0 0 16 16">
+                                                <path fillRule="evenodd" d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0" />
+                                                <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z" />
+                                                <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
                                             </svg>
-                                        </Link>
+                                        </button>
                                     </td>
                                 </tr>
                             ))

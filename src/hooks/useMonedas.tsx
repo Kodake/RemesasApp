@@ -1,9 +1,26 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import useNotifications from '../utils/useNotifications';
 import store from '../store/monedaStore';
+import { useEffect } from 'react';
 
 const useMonedas = () => {
     let nav = useNavigate();
+
+    const buscarPorId = () => {
+        const { id } = useParams();
+
+        useEffect(() => {
+            if (id !== undefined) {
+                store.buscarPorId(parseInt(id));
+            }
+        }, []);
+    }
+
+    const cargarListaPaginada = () => {
+        useEffect(() => {
+            store.listarPaginado(store.pageNumber, store.pageSize);
+        }, [store.pageNumber, store.pageSize]);
+    }
 
     const handleInputMoneda = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -41,6 +58,8 @@ const useMonedas = () => {
     };
 
     return {
+        buscarPorId,
+        cargarListaPaginada,
         handleInputMoneda,
         handleSaveMoneda,
         handleUpdateMoneda,

@@ -1,19 +1,12 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import store from '../../store/clienteStore';
-import { useEffect } from 'react';
 import { observer } from 'mobx-react';
 import useClientes from '../../hooks/useClientes';
 
 const Edit = () => {
-    const { handleInputCliente, handleInputTipoDocumento, handleUpdateCliente } = useClientes();
+    const { buscarPorId, handleInputCliente, handleInputTipoDocumento, handleUpdateCliente } = useClientes();
 
-    const { id } = useParams();
-
-    useEffect(() => {
-        if (id !== undefined) {
-            store.buscarPorId(parseInt(id));
-        }
-    }, []);
+    buscarPorId();
 
     return (
         <div className="container">

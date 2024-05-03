@@ -1,15 +1,12 @@
-import { useEffect } from 'react';
 import { observer } from 'mobx-react';
 import store from '../../store/monedaStore';
 import { Link } from 'react-router-dom';
 import useMonedas from '../../hooks/useMonedas';
 
 const List = () => {
-    const { handlePageChange } = useMonedas();
-    
-    useEffect(() => {
-        store.listarPaginado(store.pageNumber, store.pageSize);
-    }, [store.pageNumber, store.pageSize]);
+    const { cargarListaPaginada, handlePageChange } = useMonedas();
+
+    cargarListaPaginada();
 
     return (
         <>

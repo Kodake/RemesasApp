@@ -10,6 +10,11 @@ import MonedasEdit from './components/monedas/Edit.tsx';
 import ClientesList from './components/clientes/List.tsx';
 import ClientesAdd from './components/clientes/Add.tsx';
 import ClientesEdit from './components/clientes/Edit.tsx';
+import TasasList from './components/tasas/List.tsx';
+import TasasAdd from './components/tasas/Add.tsx';
+import TasasEdit from './components/tasas/Edit.tsx';
+import TransaccionesOperations from './components/transacciones/Operations.tsx';
+import TransaccionesList from './components/transacciones/List.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -24,6 +29,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Route path='/clientes' element={<ClientesList />}></Route>
         <Route path='/clientes/agregar' element={<ClientesAdd />}></Route>
         <Route path='/clientes/editar/:id' element={<ClientesEdit />}></Route>
+        <Route path='/tasas' element={<TasasList />}></Route>
+        <Route path='/tasas/agregar' element={<TasasAdd />}></Route>
+        <Route path='/tasas/editar/:id' element={<TasasEdit />}></Route>
+        <Route path='/transacciones' element={<TransaccionesOperations />}></Route>
+        <Route path='/transacciones/listado' element={<TransaccionesList />}></Route>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

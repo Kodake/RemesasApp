@@ -1,19 +1,12 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import store from '../../store/monedaStore';
-import { useEffect } from 'react';
 import { observer } from 'mobx-react';
 import useMonedas from '../../hooks/useMonedas';
 
 const Edit = () => {
-    const { handleUpdateMoneda, handleInputMoneda } = useMonedas();
+    const { buscarPorId, handleUpdateMoneda, handleInputMoneda } = useMonedas();
 
-    const { id } = useParams();
-
-    useEffect(() => {
-        if (id !== undefined) {
-            store.buscarPorId(parseInt(id));
-        }
-    }, []);
+    buscarPorId();
 
     return (
         <div className="container">
