@@ -11,7 +11,7 @@ import.meta.env.VITE_API_URL;
 class TransaccionStore {
     totalPages = 0;
     pageNumber = 0;
-    pageSize = 10;
+    pageSize = 5;
     transaccion: TransaccionDTO = {
         idTransaccion: 0,
         clienteOrigen: 0,
@@ -81,15 +81,18 @@ class TransaccionStore {
     }
 
     validationSchema = yup.object().shape({
-        monedaOrigen: yup.number()
-            .required(VALIDATION_STRINGS.monedaOrigenRequired)
-            .moreThan(0, VALIDATION_STRINGS.monedaOrigenMinLength),
-        monedaDestino: yup.number()
-            .required(VALIDATION_STRINGS.monedaDestinoRequired)
-            .moreThan(0, VALIDATION_STRINGS.monedaDestinoMinLength),
-        valor: yup.number()
-            .required(VALIDATION_STRINGS.valorRequired)
-            .moreThan(0, VALIDATION_STRINGS.valorMinLength)
+        clienteOrigen: yup.number()
+            .required(VALIDATION_STRINGS.clienteOrigenRequired)
+            .moreThan(0, VALIDATION_STRINGS.clienteOrigenMinLength),
+        clienteDestino: yup.number()
+            .required(VALIDATION_STRINGS.clienteDestinoRequired)
+            .moreThan(0, VALIDATION_STRINGS.clienteDestinoMinLength),
+        moneda: yup.number()
+            .required(VALIDATION_STRINGS.monedaRequired)
+            .moreThan(0, VALIDATION_STRINGS.monedaMinLength),
+        cantidad: yup.number()
+            .required(VALIDATION_STRINGS.cantidadRequired)
+            .moreThan(0, VALIDATION_STRINGS.cantidadMinLength)
     });
 
     validateTransaccion() {
@@ -126,7 +129,7 @@ class TransaccionStore {
         });
     }
 
-    async buscarPorCodigo(codigo: string): Promise<void> {
+    async buscarPorCodigo(codigo: string): Promise<any> {
         const url = `${import.meta.env.VITE_API_URL}/transacciones/${codigo}`;
 
         try {
@@ -136,6 +139,8 @@ class TransaccionStore {
             runInAction(() => {
                 this.setTransaccion(data);
             });
+
+            return data;
         } catch (error: any) {
             useNotifications(VALIDATION_STRINGS.withdrawError, error.response.data, 'error');
             throw error;
@@ -157,7 +162,23 @@ class TransaccionStore {
     }
 
     async actualizar(): Promise<void> {
-        const url = `${import.meta.env.VITE_API_URL}/transacciones/${this.transaccion.idTransaccion}`;
+        const url = `${import.meta.env.VITE_API_URL}/transacciones/${this.transaccion.codigo}`;
+
+        try {
+            await axios.put(url, null);
+
+            this.limpiar();
+            await this.listarPaginado(this.pageNumber, this.pageSize);
+        } catch (error: any) {
+            useNotifications(VALIDATION_STRINGS.validationError, error.response.data, 'error');
+            throw error;
+        }
+    }
+
+    async intercambiar(cantidad: number, moneda: number): Promise<void> {
+        const url = `${import.meta.env.VITE_API_URL}/transacciones/${this.transaccion.codigo}/intercambiar`;
+        this.transaccion.cantidad = cantidad;
+        this.transaccion.moneda = moneda;
 
         try {
             await axios.put(url, this.transaccion);

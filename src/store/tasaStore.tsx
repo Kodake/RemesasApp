@@ -1,5 +1,5 @@
 import { makeAutoObservable, observable, runInAction } from 'mobx';
-import { TasaDTO } from '../classes/appClasses';
+import { GetTasaDTO, TasaDTO } from '../classes/appClasses';
 import axios from 'axios';
 import * as yup from 'yup';
 import { VALIDATION_STRINGS } from '../messages/appMessages';
@@ -19,6 +19,7 @@ class TasaStore {
         valor: 0
     }
     tasas: TasaDTO[] = [];
+    select: GetTasaDTO[] = [];
     consultarApi: boolean = false;
     isValid: boolean = false;
     isLoading: boolean = false;
@@ -50,6 +51,10 @@ class TasaStore {
 
     setTasas(tasas: TasaDTO[]) {
         this.tasas = tasas;
+    }
+
+    setSelect(select: GetTasaDTO[]) {
+        this.select = select;
     }
 
     setIsValid(isValid: boolean) {
@@ -99,6 +104,21 @@ class TasaStore {
             });
             return false;
         }
+    }
+
+    async listar(): Promise<void> {
+        const url = `${import.meta.env.VITE_API_URL}/tasas/listar`;
+
+        await axios.get(url).then(resp => {
+            const data = resp.data;
+            this.setSelect(data);
+
+            runInAction(() => {
+                this.setSelect(data);
+            });
+        }).catch((error) => {
+            console.error(error);
+        });
     }
 
     async listarPaginado(pageNumber: number, pageSize: number): Promise<void> {

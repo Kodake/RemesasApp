@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import useClientes from '../../hooks/useClientes';
 
 const Add = () => {
-    const { handleSaveCliente, handleInputCliente, handleInputTipoDocumento } = useClientes();
+    const { handleSaveCliente, handleInputCliente, handleInputTipoDocumento, handleClearCliente } = useClientes();
 
     return (
         <div className="container">
@@ -31,7 +31,7 @@ const Add = () => {
                 </div>
                 <div className="text-center">
                     <button type="submit" className="btn btn-success btn-sm me-sm-3">Agregar</button>
-                    <Link to={'/'} className="btn btn-danger btn-sm">Regresar</Link>
+                    <Link to={'/'} className="btn btn-danger btn-sm" onClick={handleClearCliente}>Regresar</Link>
                 </div>
             </form>
         </div>

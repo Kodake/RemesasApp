@@ -18,6 +18,14 @@ export const VALIDATION_STRINGS = {
     monedaOrigenMinLength: 'Debe seleccionar una moneda de origen',
     monedaDestinoRequired: 'La moneda de destino es obligatoria',
     monedaDestinoMinLength: 'Debe seleccionar una moneda de estino',
+    clienteOrigenRequired: 'El cliente de origen es obligatorio',
+    clienteOrigenMinLength: 'Debe seleccionar un cliente de origen',
+    clienteDestinoRequired: 'El cliente de destino es obligatorio',
+    clienteDestinoMinLength: 'Debe seleccionar un cliente de estino',
+    monedaRequired: 'La moneda es obligatoria',
+    monedaMinLength: 'Debe seleccionar una moneda',
     valorRequired: 'El valor de la tasa es obligatorio',
-    valorMinLength: 'El valor de la tasa debe ser mayor a 0'
+    valorMinLength: 'El valor de la tasa debe ser mayor a 0',
+    cantidadRequired: 'La cantidad del envío es obligatoria',
+    cantidadMinLength: 'La cantidad del envío debe ser mayor a 0'
 };

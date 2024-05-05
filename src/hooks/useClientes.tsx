@@ -6,6 +6,12 @@ import { useEffect } from 'react';
 const useClientes = () => {
     let nav = useNavigate();
 
+    const listarClientes = () => {
+        useEffect(() => {
+            store.listar();
+        }, []);
+    }
+
     const buscarPorId = () => {
         const { id } = useParams();
 
@@ -62,14 +68,20 @@ const useClientes = () => {
         store.setCurrentPage(page);
     };
 
+    const handleClearCliente = () => {
+        store.limpiar();
+    }
+
     return {
+        listarClientes,
         buscarPorId,
         cargarListaPaginada,
         handleInputCliente,
         handleInputTipoDocumento,
         handleSaveCliente,
         handleUpdateCliente,
-        handlePageChange
+        handlePageChange,
+        handleClearCliente
     }
 }
 

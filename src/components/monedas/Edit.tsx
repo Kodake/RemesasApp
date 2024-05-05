@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import useMonedas from '../../hooks/useMonedas';
 
 const Edit = () => {
-    const { buscarPorId, handleUpdateMoneda, handleInputMoneda } = useMonedas();
+    const { buscarPorId, handleUpdateMoneda, handleInputMoneda, handleClearMoneda } = useMonedas();
 
     buscarPorId();
 
@@ -24,7 +24,7 @@ const Edit = () => {
                 </div>
                 <div className="text-center">
                     <button type="submit" className="btn btn-success btn-sm me-sm-3">Actualizar</button>
-                    <Link to={'/'} className="btn btn-danger btn-sm">Regresar</Link>
+                    <Link to={'/'} className="btn btn-danger btn-sm" onClick={handleClearMoneda}>Regresar</Link>
                 </div>
             </form>
         </div>

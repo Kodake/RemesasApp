@@ -20,6 +20,7 @@ class ClienteStore {
         tipo: 0
     }
     clientes: ClienteDTO[] = [];
+    select: ClienteDTO[] = [];
     consultarApi: boolean = false;
     isValid: boolean = false;
     isLoading: boolean = false;
@@ -52,6 +53,10 @@ class ClienteStore {
 
     setClientes(clientes: ClienteDTO[]) {
         this.clientes = clientes;
+    }
+
+    setSelect(select: ClienteDTO[]) {
+        this.select = select;
     }
 
     setIsValid(isValid: boolean) {
@@ -105,6 +110,21 @@ class ClienteStore {
             });
             return false;
         }
+    }
+
+    async listar(): Promise<void> {
+        const url = `${import.meta.env.VITE_API_URL}/clientes/listar`;
+
+        await axios.get(url).then(resp => {
+            const data = resp.data;
+            this.setSelect(data);
+
+            runInAction(() => {
+                this.setSelect(data);
+            });
+        }).catch((error) => {
+            console.error(error);
+        });
     }
 
     async listarPaginado(pageNumber: number, pageSize: number): Promise<void> {

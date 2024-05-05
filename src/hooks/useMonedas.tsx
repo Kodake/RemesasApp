@@ -6,6 +6,12 @@ import { useEffect } from 'react';
 const useMonedas = () => {
     let nav = useNavigate();
 
+    const listarMonedas = () => {
+        useEffect(() => {
+            store.listar();
+        }, []);
+    }
+
     const buscarPorId = () => {
         const { id } = useParams();
 
@@ -57,13 +63,19 @@ const useMonedas = () => {
         store.setCurrentPage(page);
     };
 
+    const handleClearMoneda = () => {
+        store.limpiar();
+    }
+
     return {
+        listarMonedas,
         buscarPorId,
         cargarListaPaginada,
         handleInputMoneda,
         handleSaveMoneda,
         handleUpdateMoneda,
-        handlePageChange
+        handlePageChange,
+        handleClearMoneda
     }
 }
 

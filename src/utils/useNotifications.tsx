@@ -7,7 +7,7 @@ const useNotifications = (title: string, detail: string | HTMLElement | JQuery |
             html: `${detail}`,
             icon: `${icon}`,
             confirmButtonColor: '#3085d6',
-            allowOutsideClick: false
+            allowOutsideClick: true
         })
     )
 }

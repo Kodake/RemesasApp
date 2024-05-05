@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import useClientes from '../../hooks/useClientes';
 
 const Edit = () => {
-    const { buscarPorId, handleInputCliente, handleInputTipoDocumento, handleUpdateCliente } = useClientes();
+    const { buscarPorId, handleInputCliente, handleInputTipoDocumento, handleUpdateCliente, handleClearCliente } = useClientes();
 
     buscarPorId();
 
@@ -34,7 +34,7 @@ const Edit = () => {
                 </div>
                 <div className="text-center">
                     <button type="submit" className="btn btn-success btn-sm me-sm-3">Actualizar</button>
-                    <Link to={'/'} className="btn btn-danger btn-sm">Regresar</Link>
+                    <Link to={'/'} className="btn btn-danger btn-sm" onClick={handleClearCliente}>Regresar</Link>
                 </div>
             </form>
         </div>

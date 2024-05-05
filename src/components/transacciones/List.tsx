@@ -1,11 +1,20 @@
 import { observer } from 'mobx-react';
 import store from '../../store/transaccionStore';
 import useTransacciones from '../../hooks/useTransacciones';
+import { NumericFormat } from 'react-number-format';
+import useTasas from '../../hooks/useTasas';
+import useMonedas from '../../hooks/useMonedas';
 
 const List = () => {
-    const { cargarListaPaginada, handlePageChange, handleClipboard } = useTransacciones();
+    const { cargarListaPaginada, handlePageChange, handleClipboard, truncateCode, handleRequestExchange } = useTransacciones();
+    const { listarTasas } = useTasas();
+    const { listarMonedas } = useMonedas();
 
     cargarListaPaginada();
+
+    listarTasas();
+
+    listarMonedas();
 
     return (
         <>
@@ -22,6 +31,7 @@ const List = () => {
                             <th scope="col">Destinatario</th>
                             <th scope="col">Cantidad</th>
                             <th scope="col">Moneda</th>
+                            <th scope="col">Código</th>
                             <th scope="col">Estado</th>
                             <th></th>
                         </tr>
@@ -32,16 +42,42 @@ const List = () => {
                                 <tr key={transaccion.idTransaccion}>
                                     <th scope="row">{transaccion.idTransaccion}</th>
                                     <td>{transaccion.clienteDestino}</td>
-                                    <td>{transaccion.cantidad}</td>
+                                    <td>
+                                        <NumericFormat
+                                            value={transaccion.cantidad}
+                                            displayType={'text'}
+                                            thousandSeparator=","
+                                            prefix="$"
+                                            decimalScale={2}
+                                            fixedDecimalScale
+                                        />
+                                    </td>
                                     <td>{transaccion.moneda}</td>
+                                    <td>{truncateCode(transaccion.codigo)}</td>
                                     <td className='text-center'>
                                         {transaccion.retirado ? (
-                                            <span className="badge text-bg-warning">Retirado</span>
+                                            <span className="badge text-bg-danger">Retirado</span>
                                         ) : (
                                             <span className="badge text-bg-success">Disponible</span>
                                         )}
                                     </td>
                                     <td className="text-center">
+                                        {!transaccion.retirado ? (
+                                            <button onClick={() => handleRequestExchange(transaccion)} className="btn btn-warning btn-sm me-sm-3">
+                                                <svg fillRule="evenodd" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                                                    <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9" />
+                                                    <path fillRule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z" />
+                                                </svg>
+                                            </button>
+                                        ) : (
+                                            <button className="btn btn-warning btn-sm me-sm-3" disabled>
+                                                <svg fillRule="evenodd" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                                                    <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9" />
+                                                    <path fillRule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z" />
+                                                </svg>
+                                            </button>
+                                        )}
+
                                         <button onClick={() => handleClipboard(transaccion.codigo)} className="btn btn-primary btn-sm">
                                             <svg fillRule="evenodd" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-clipboard-check" viewBox="0 0 16 16">
                                                 <path fillRule="evenodd" d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0" />
@@ -54,7 +90,7 @@ const List = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={5} className="text-center">{'No hay datos para mostrar'}</td>
+                                <td colSpan={7} className="text-center">{'No hay datos para mostrar'}</td>
                             </tr>
                         )}
                     </tbody>

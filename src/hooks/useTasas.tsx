@@ -1,25 +1,12 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import useNotifications from '../utils/useNotifications';
 import store from '../store/tasaStore';
-import storeMon from '../store/monedaStore';
 import { useEffect } from 'react';
 import { GetTasaDTO } from '../classes/appClasses';
 import Swal from 'sweetalert2';
 
 const useTasas = () => {
     let nav = useNavigate();
-
-    const cargarListaPaginada = () => {
-        useEffect(() => {
-            store.listarPaginado(store.pageNumber, store.pageSize);
-        }, [store.pageNumber, store.pageSize]);
-    }
-
-    const listarMonedas = () => {
-        useEffect(() => {
-            storeMon.listar();
-        }, []);
-    }
 
     const buscarPorId = () => {
         const { id } = useParams();
@@ -29,6 +16,18 @@ const useTasas = () => {
                 store.buscarPorId(parseInt(id));
             }
         }, []);
+    }
+
+    const listarTasas = () => {
+        useEffect(() => {
+            store.listar();
+        }, []);
+    }
+
+    const cargarListaPaginada = () => {
+        useEffect(() => {
+            store.listarPaginado(store.pageNumber, store.pageSize);
+        }, [store.pageNumber, store.pageSize]);
     }
 
     const handleCalculate = (tasa: GetTasaDTO) => {
@@ -104,16 +103,21 @@ const useTasas = () => {
         store.setCurrentPage(page);
     };
 
+    const handleClearTasa = () => {
+        store.limpiar();
+    }
+
     return {
         buscarPorId,
+        listarTasas,
         cargarListaPaginada,
-        listarMonedas,
         handleInputTasa,
         handleInputMoneda,
         handleSaveTasa,
         handleUpdateTasa,
         handleCalculate,
-        handlePageChange
+        handlePageChange,
+        handleClearTasa
     }
 }
 

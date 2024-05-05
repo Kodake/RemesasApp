@@ -44,7 +44,7 @@ const List = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={5} className="text-center">{'No hay datos para mostrar'}</td>
+                                <td colSpan={4} className="text-center">{'No hay datos para mostrar'}</td>
                             </tr>
                         )}
                     </tbody>

@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import useMonedas from '../../hooks/useMonedas';
 
 const Add = () => {
-    const { handleSaveMoneda, handleInputMoneda } = useMonedas();
+    const { handleSaveMoneda, handleInputMoneda, handleClearMoneda } = useMonedas();
 
     return (
         <div className="container">
@@ -21,7 +21,7 @@ const Add = () => {
                 </div>
                 <div className="text-center">
                     <button type="submit" className="btn btn-success btn-sm me-sm-3">Agregar</button>
-                    <Link to={'/'} className="btn btn-danger btn-sm">Regresar</Link>
+                    <Link to={'/'} className="btn btn-danger btn-sm" onClick={handleClearMoneda}>Regresar</Link>
                 </div>
             </form>
         </div>

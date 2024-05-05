@@ -15,6 +15,8 @@ import TasasAdd from './components/tasas/Add.tsx';
 import TasasEdit from './components/tasas/Edit.tsx';
 import TransaccionesOperations from './components/transacciones/Operations.tsx';
 import TransaccionesList from './components/transacciones/List.tsx';
+import TransaccionesSend from './components/transacciones/Send.tsx';
+import TransaccionesWithdraw from './components/transacciones/Withdraw.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -34,6 +36,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Route path='/tasas/editar/:id' element={<TasasEdit />}></Route>
         <Route path='/transacciones' element={<TransaccionesOperations />}></Route>
         <Route path='/transacciones/listado' element={<TransaccionesList />}></Route>
+        <Route path='/transacciones/envios' element={<TransaccionesSend />}></Route>
+        <Route path='/transacciones/retiros/:codigo' element={<TransaccionesWithdraw />}></Route>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
