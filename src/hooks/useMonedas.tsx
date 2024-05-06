@@ -42,7 +42,7 @@ const useMonedas = () => {
         if (moneda === null) {
             return;
         }
-        nav('/');
+        nav('/monedas');
         useNotifications('Guardado', 'El registro ha sido guardado satisfactoriamente.', 'success');
     };
 
@@ -55,7 +55,7 @@ const useMonedas = () => {
         if (moneda === null) {
             return;
         }
-        nav('/');
+        nav('/monedas');
         useNotifications('Guardado', 'El registro ha sido guardado satisfactoriamente.', 'success');
     };
 

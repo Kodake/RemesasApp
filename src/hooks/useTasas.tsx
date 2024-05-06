@@ -82,7 +82,7 @@ const useTasas = () => {
         if (moneda === null) {
             return;
         }
-        nav('/');
+        nav('/tasas');
         useNotifications('Guardado', 'El registro ha sido guardado satisfactoriamente.', 'success');
     };
 
@@ -95,7 +95,7 @@ const useTasas = () => {
         if (moneda === null) {
             return;
         }
-        nav('/');
+        nav('/tasas');
         useNotifications('Guardado', 'El registro ha sido guardado satisfactoriamente.', 'success');
     };
 

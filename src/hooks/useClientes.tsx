@@ -47,7 +47,7 @@ const useClientes = () => {
         if (cliente === null) {
             return;
         }
-        nav('/');
+        nav('/clientes');
         useNotifications('Guardado', 'El registro ha sido guardado satisfactoriamente.', 'success');
     };
 
@@ -60,7 +60,7 @@ const useClientes = () => {
         if (cliente === null) {
             return;
         }
-        nav('/');
+        nav('/clientes');
         useNotifications('Guardado', 'El registro ha sido actualizado satisfactoriamente.', 'success');
     };
 
