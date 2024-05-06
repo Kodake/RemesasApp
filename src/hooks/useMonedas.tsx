@@ -1,82 +1,90 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import useNotifications from '../utils/useNotifications';
-import store from '../store/monedaStore';
-import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom'
+import useNotifications from '../utils/useNotifications'
+import store from '../store/monedaStore'
+import { useEffect } from 'react'
 
 const useMonedas = () => {
-    let nav = useNavigate();
+  let nav = useNavigate()
 
-    const listarMonedas = () => {
-        useEffect(() => {
-            store.listar();
-        }, []);
+  const listarMonedas = () => {
+    useEffect(() => {
+      store.listar()
+    }, [])
+  }
+
+  const buscarPorId = () => {
+    const { id } = useParams()
+
+    useEffect(() => {
+      if (id !== undefined) {
+        store.buscarPorId(parseInt(id))
+      }
+    }, [])
+  }
+
+  const cargarListaPaginada = () => {
+    useEffect(() => {
+      store.listarPaginado(store.pageNumber, store.pageSize)
+    }, [store.pageNumber, store.pageSize])
+  }
+
+  const handleInputMoneda = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    store.setMoneda({ ...store.moneda, [name]: value })
+  }
+
+  const handleSaveMoneda = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!store.validateMoneda()) {
+      return
     }
-
-    const buscarPorId = () => {
-        const { id } = useParams();
-
-        useEffect(() => {
-            if (id !== undefined) {
-                store.buscarPorId(parseInt(id));
-            }
-        }, []);
+    const moneda = await store.guardar()
+    if (moneda === null) {
+      return
     }
+    nav('/monedas')
+    useNotifications(
+      'Guardado',
+      'El registro ha sido guardado satisfactoriamente.',
+      'success'
+    )
+  }
 
-    const cargarListaPaginada = () => {
-        useEffect(() => {
-            store.listarPaginado(store.pageNumber, store.pageSize);
-        }, [store.pageNumber, store.pageSize]);
+  const handleUpdateMoneda = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!store.validateMoneda()) {
+      return
     }
-
-    const handleInputMoneda = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        store.setMoneda({ ...store.moneda, [name]: value });
-    };
-
-    const handleSaveMoneda = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!store.validateMoneda()) {
-            return;
-        }
-        const moneda = await store.guardar();
-        if (moneda === null) {
-            return;
-        }
-        nav('/monedas');
-        useNotifications('Guardado', 'El registro ha sido guardado satisfactoriamente.', 'success');
-    };
-
-    const handleUpdateMoneda = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!store.validateMoneda()) {
-            return;
-        }
-        const moneda = await store.actualizar();
-        if (moneda === null) {
-            return;
-        }
-        nav('/monedas');
-        useNotifications('Guardado', 'El registro ha sido guardado satisfactoriamente.', 'success');
-    };
-
-    const handlePageChange = (page: number) => {
-        store.setCurrentPage(page);
-    };
-
-    const handleClearMoneda = () => {
-        store.limpiar();
+    const moneda = await store.actualizar()
+    if (moneda === null) {
+      return
     }
+    nav('/monedas')
+    useNotifications(
+      'Guardado',
+      'El registro ha sido guardado satisfactoriamente.',
+      'success'
+    )
+  }
 
-    return {
-        listarMonedas,
-        buscarPorId,
-        cargarListaPaginada,
-        handleInputMoneda,
-        handleSaveMoneda,
-        handleUpdateMoneda,
-        handlePageChange,
-        handleClearMoneda
-    }
+  const handlePageChange = (page: number) => {
+    store.setCurrentPage(page)
+  }
+
+  const handleClearMoneda = () => {
+    store.limpiar()
+  }
+
+  return {
+    listarMonedas,
+    buscarPorId,
+    cargarListaPaginada,
+    handleInputMoneda,
+    handleSaveMoneda,
+    handleUpdateMoneda,
+    handlePageChange,
+    handleClearMoneda,
+  }
 }
 
-export default useMonedas;
+export default useMonedas
